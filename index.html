@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Media Pembelajaran Interactive - Kegiatan Ekonomi</title>
+  <title>Media Pembelajaran Interaktif - Kegiatan Ekonomi</title>
   <!-- Google Fonts & Font Awesome CDN -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -95,6 +95,33 @@
       color: #D35400;
     }
 
+    /* Form Input Identity */
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #CBD5E1;
+      border-radius: 14px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
     /* Rules & Quiz Box */
     .rules-list {
       background: #EBF5FB;
@@ -126,12 +153,29 @@
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
+      position: relative;
     }
 
-    .option-btn:hover {
+    .option-btn:hover:not([disabled]) {
       background: #E2E8F0;
       border-color: var(--primary);
+    }
+
+    /* Indikator Pilihan Jawaban */
+    .option-btn.selected-correct {
+      background: #E8F8F5 !important;
+      border-color: var(--success) !important;
+      color: #117A65 !important;
+      font-weight: 600;
+    }
+
+    .option-btn.selected-wrong {
+      background: #FDEDEC !important;
+      border-color: var(--danger) !important;
+      color: #78281F !important;
+      font-weight: 600;
     }
 
     /* Buttons */
@@ -160,6 +204,15 @@
     }
 
     /* Score Box */
+    .identity-badge {
+      background: #EBF5FB;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: var(--primary);
+    }
+
     .score-circle {
       width: 120px;
       height: 120px;
@@ -243,14 +296,36 @@
         </div>
       </div>
 
-      <button class="btn-main" onclick="goToRules()">Lanjut ke Kuis <i class="fa-solid fa-arrow-right"></i></button>
+      <button class="btn-main" onclick="goToIdentity()">Lanjut ke Kuis <i class="fa-solid fa-arrow-right"></i></button>
     </div>
 
-    <!-- SEKSI 2: ATURAN KUIS -->
+    <!-- SEKSI 2: FORM IDENTITAS SISWA -->
+    <div id="section-identity" class="hidden">
+      <header>
+        <h1><i class="fa-solid fa-user-pen"></i> Isi Identitas</h1>
+        <p>Isi nama dan kelasmu sebelum mengerjakan kuis ya!</p>
+      </header>
+
+      <form id="identity-form" onsubmit="saveIdentity(event)">
+        <div class="form-group">
+          <label for="student-name">Nama Lengkap:</label>
+          <input type="text" id="student-name" class="form-control" placeholder="Contoh: Budi Santoso" required>
+        </div>
+
+        <div class="form-group">
+          <label for="student-class">Kelas:</label>
+          <input type="text" id="student-class" class="form-control" placeholder="Contoh: 5A" required>
+        </div>
+
+        <button type="submit" class="btn-main">Lanjut ke Aturan <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+    </div>
+
+    <!-- SEKSI 3: ATURAN KUIS -->
     <div id="section-rules" class="hidden">
       <header>
         <h1><i class="fa-solid fa-clipboard-list"></i> Aturan Kuis</h1>
-        <p>Pahami petunjuk di bawah ini sebelum mulai ya!</p>
+        <p>Pahami petunjuk di bawah ini sebelum mulai!</p>
       </header>
 
       <div class="rules-list">
@@ -264,7 +339,7 @@
       <button class="btn-main" onclick="startQuiz()">Mulai Kerjakan <i class="fa-solid fa-play"></i></button>
     </div>
 
-    <!-- SEKSI 3: SOAL KUIS -->
+    <!-- SEKSI 4: SOAL KUIS -->
     <div id="section-quiz" class="hidden">
       <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
@@ -281,12 +356,17 @@
       </div>
     </div>
 
-    <!-- SEKSI 4: HASIL KUIS -->
+    <!-- SEKSI 5: HASIL KUIS -->
     <div id="section-result" class="hidden" style="text-align: center;">
       <header>
         <h1><i class="fa-solid fa-trophy" style="color: #F1C40F;"></i> Kuis Selesai!</h1>
         <p id="result-message">Hebat! Kamu telah menyelesaikan kuis.</p>
       </header>
+
+      <div class="identity-badge">
+        <span id="res-student-name"><strong>Nama:</strong> -</span> | 
+        <span id="res-student-class"><strong>Kelas:</strong> -</span>
+      </div>
 
       <div class="score-circle" id="score-display">
         0
@@ -345,9 +425,12 @@
 
     let currentQuestionIndex = 0;
     let score = 0;
+    let studentName = '';
+    let studentClass = '';
 
     // Elemen DOM
     const secMateri = document.getElementById('section-materi');
+    const secIdentity = document.getElementById('section-identity');
     const secRules = document.getElementById('section-rules');
     const secQuiz = document.getElementById('section-quiz');
     const secResult = document.getElementById('section-result');
@@ -359,8 +442,17 @@
     const scoreDisplayEl = document.getElementById('score-display');
 
     // Navigasi Tampilan
-    function goToRules() {
+    function goToIdentity() {
       secMateri.classList.add('hidden');
+      secIdentity.classList.remove('hidden');
+    }
+
+    function saveIdentity(event) {
+      event.preventDefault();
+      studentName = document.getElementById('student-name').value;
+      studentClass = document.getElementById('student-class').value;
+
+      secIdentity.classList.add('hidden');
       secRules.classList.remove('hidden');
     }
 
@@ -387,31 +479,46 @@
       q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.innerText = opt.text;
-        btn.onclick = () => selectOption(opt.isCorrect);
+        btn.innerHTML = `<span>${opt.text}</span> <i class="fa-regular fa-circle"></i>`;
+        btn.onclick = (e) => selectOption(btn, opt.isCorrect);
         optionsContainerEl.appendChild(btn);
       });
     }
 
-    // Handle Jawaban Terpilih
-    function selectOption(isCorrect) {
+    // Handle Jawaban Terpilih (Dengan Penanda Visual)
+    function selectOption(selectedBtn, isCorrect) {
+      // Matikan semua tombol biar gak bisa dipencet 2x
+      const allBtns = optionsContainerEl.querySelectorAll('.option-btn');
+      allBtns.forEach(btn => btn.disabled = true);
+
+      // Tandai tombol yang dipilih
       if (isCorrect) {
         score += 20; // 20 Poin per soal
-      }
-
-      currentQuestionIndex++;
-
-      if (currentQuestionIndex < quizData.length) {
-        showQuestion();
+        selectedBtn.classList.add('selected-correct');
+        selectedBtn.querySelector('i').className = 'fa-solid fa-circle-check';
       } else {
-        showResult();
+        selectedBtn.classList.add('selected-wrong');
+        selectedBtn.querySelector('i').className = 'fa-solid fa-circle-xmark';
       }
+
+      // Beri jeda 0.8 detik agar anak melihat hasilnya baru lanjut ke soal berikutnya
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+          showQuestion();
+        } else {
+          showResult();
+        }
+      }, 800);
     }
 
     // Tampilkan Skor Akhir
     function showResult() {
       secQuiz.classList.add('hidden');
       secResult.classList.remove('hidden');
+
+      document.getElementById('res-student-name').innerHTML = `<strong>Nama:</strong> ${studentName}`;
+      document.getElementById('res-student-class').innerHTML = `<strong>Kelas:</strong> ${studentClass}`;
       
       scoreDisplayEl.innerHTML = `${score} <span>POIN</span>`;
       
@@ -429,6 +536,7 @@
     function restartApp() {
       secResult.classList.add('hidden');
       secMateri.classList.remove('hidden');
+      document.getElementById('identity-form').reset();
     }
   </script>
 </body>
