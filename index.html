@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Pembelajaran Interactive - Kegiatan Ekonomi</title>
+  <!-- Google Fonts & Font Awesome CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4A90E2;
+      --secondary: #FF9F43;
+      --success: #2ECC71;
+      --danger: #EE5253;
+      --bg: #F0F8FF;
+      --card-bg: #FFFFFF;
+      --text: #2C3E50;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 650px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 30px;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      color: var(--primary);
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #7F8C8D;
+      font-size: 16px;
+    }
+
+    /* Cards & Content */
+    .materi-card {
+      background: #F8FAFC;
+      border-left: 6px solid var(--primary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .materi-card h3 {
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .materi-card p {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .contoh-box {
+      background: #FFF9E6;
+      border: 1px dashed var(--secondary);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #D35400;
+    }
+
+    /* Rules & Quiz Box */
+    .rules-list {
+      background: #EBF5FB;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .rules-list li {
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .option-btn {
+      background: #F1F5F9;
+      border: 2px solid #CBD5E1;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .option-btn:hover {
+      background: #E2E8F0;
+      border-color: var(--primary);
+    }
+
+    /* Buttons */
+    .btn-main {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      box-shadow: 0 4px 0 #E67E22;
+      margin-top: 15px;
+    }
+
+    .btn-main:hover {
+      background: #E67E22;
+    }
+
+    .btn-main:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+
+    /* Score Box */
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+      font-size: 32px;
+      font-weight: 700;
+      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
+    }
+
+    .score-circle span {
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    /* Utils */
+    .hidden {
+      display: none !important;
+    }
+
+    .question-title {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- SEKSI 1: MATERI PEMBELAJARAN -->
+    <div id="section-materi">
+      <header>
+        <h1><i class="fa-solid fa-graduation-cap"></i> Belajar Kegiatan Ekonomi</h1>
+        <p>Kelas SD - Mengenal Produksi, Distribusi, & Konsumsi</p>
+      </header>
+
+      <div class="materi-card">
+        <h3><i class="fa-solid fa-industry"></i> 1. Produksi</h3>
+        <p>Produksi adalah kegiatan membuat atau menghasilkan barang dan jasa untuk memenuhi kebutuhan manusia.</p>
+        <div class="contoh-box">
+          <strong>Contoh:</strong> Ibu membuat kue untuk dijual.
+        </div>
+      </div>
+
+      <div class="materi-card">
+        <h3><i class="fa-solid fa-truck-fast"></i> 2. Distribusi</h3>
+        <p>Distribusi adalah kegiatan menyalurkan atau mengantarkan barang dari pembuat barang kepada orang yang membutuhkan.</p>
+        <div class="contoh-box">
+          <strong>Contoh:</strong> Kurir mengantarkan paket ke rumah.
+        </div>
+      </div>
+
+      <div class="materi-card">
+        <h3><i class="fa-solid fa-cart-shopping"></i> 3. Konsumsi</h3>
+        <p>Konsumsi adalah kegiatan menggunakan atau memakai barang dan jasa untuk memenuhi kebutuhan.</p>
+        <div class="contoh-box">
+          <strong>Contoh:</strong> Dina membeli pulpen untuk digunakan mengerjakan tugas.
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="goToRules()">Lanjut ke Kuis <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+    <!-- SEKSI 2: ATURAN KUIS -->
+    <div id="section-rules" class="hidden">
+      <header>
+        <h1><i class="fa-solid fa-clipboard-list"></i> Aturan Kuis</h1>
+        <p>Pahami petunjuk di bawah ini sebelum mulai ya!</p>
+      </header>
+
+      <div class="rules-list">
+        <ol style="padding-left: 20px;">
+          <li>Baca setiap soal dengan teliti.</li>
+          <li>Pilih jawaban yang paling tepat.</li>
+          <li>Setiap jawaban yang benar mendapat <strong>20 poin</strong>.</li>
+        </ol>
+      </div>
+
+      <button class="btn-main" onclick="startQuiz()">Mulai Kerjakan <i class="fa-solid fa-play"></i></button>
+    </div>
+
+    <!-- SEKSI 3: SOAL KUIS -->
+    <div id="section-quiz" class="hidden">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;" id="question-number">Soal 1 dari 5</p>
+
+      <div class="question-title" id="question-text">
+        <!-- Teks Soal Muncul Lewat JS -->
+      </div>
+
+      <div class="options-container" id="options-container">
+        <!-- Pilihan Jawaban Muncul Lewat JS -->
+      </div>
+    </div>
+
+    <!-- SEKSI 4: HASIL KUIS -->
+    <div id="section-result" class="hidden" style="text-align: center;">
+      <header>
+        <h1><i class="fa-solid fa-trophy" style="color: #F1C40F;"></i> Kuis Selesai!</h1>
+        <p id="result-message">Hebat! Kamu telah menyelesaikan kuis.</p>
+      </header>
+
+      <div class="score-circle" id="score-display">
+        0
+        <span>POIN</span>
+      </div>
+
+      <button class="btn-main" onclick="restartApp()"><i class="fa-solid fa-rotate-right"></i> Pelajari Materi Lagi</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Data Soal & Jawaban
+    const quizData = [
+      {
+        question: "Perhatikan kegiatan berikut!<br>(1) Petani menanam padi<br>(2) Sopir mengantar beras ke toko<br>(3) Ibu memasak dan memakan nasi<br><br>Urutan kegiatan ekonomi yang tepat adalah…",
+        options: [
+          { text: "A. Produksi → distribusi → konsumsi", isCorrect: true },
+          { text: "B. Distribusi → produksi → konsumsi", isCorrect: false },
+          { text: "C. Produksi → konsumsi → distribusi", isCorrect: false }
+        ]
+      },
+      {
+        question: "Pak Joko membuat meja dari kayu, kemudian menjualnya kepada pelanggan. Kegiatan Pak Joko tersebut termasuk kegiatan…",
+        options: [
+          { text: "A. Konsumsi", isCorrect: false },
+          { text: "B. Distribusi", isCorrect: false },
+          { text: "C. Produksi", isCorrect: true }
+        ]
+      },
+      {
+        question: "Perhatikan pasangan kegiatan berikut. Manakah yang menunjukkan kegiatan produksi?",
+        options: [
+          { text: "A. Ibu membeli sayur di pasar", isCorrect: false },
+          { text: "B. Kurir mengantar paket ke rumah", isCorrect: false },
+          { text: "C. Ayah membuat rak buku dari kayu untuk di jual", isCorrect: true }
+        ]
+      },
+      {
+        question: "Kegiatan berikut yang termasuk konsumsi adalah…",
+        options: [
+          { text: "A. Nelayan menangkap ikan", isCorrect: false },
+          { text: "B. Ibu memasak ikan untuk dimakan keluarga", isCorrect: true },
+          { text: "C. Sopir mengantar ikan ke pasar", isCorrect: false }
+        ]
+      },
+      {
+        question: "Sebuah toko menerima pakaian dari pabrik untuk dijual kepada pembeli. Kegiatan tersebut termasuk kegiatan…",
+        options: [
+          { text: "A. Distribusi", isCorrect: true },
+          { text: "B. Produksi", isCorrect: false },
+          { text: "C. Konsumsi", isCorrect: false }
+        ]
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // Elemen DOM
+    const secMateri = document.getElementById('section-materi');
+    const secRules = document.getElementById('section-rules');
+    const secQuiz = document.getElementById('section-quiz');
+    const secResult = document.getElementById('section-result');
+
+    const questionNumberEl = document.getElementById('question-number');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainerEl = document.getElementById('options-container');
+    const progressFillEl = document.getElementById('progress-fill');
+    const scoreDisplayEl = document.getElementById('score-display');
+
+    // Navigasi Tampilan
+    function goToRules() {
+      secMateri.classList.add('hidden');
+      secRules.classList.remove('hidden');
+    }
+
+    function startQuiz() {
+      secRules.classList.add('hidden');
+      secQuiz.classList.remove('hidden');
+      currentQuestionIndex = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    // Tampilkan Soal
+    function showQuestion() {
+      const q = quizData[currentQuestionIndex];
+      questionNumberEl.innerText = `Soal ${currentQuestionIndex + 1} dari ${quizData.length}`;
+      questionTextEl.innerHTML = q.question;
+      
+      // Update Progress Bar
+      const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFillEl.style.width = `${progressPercent}%`;
+
+      // Render Pilihan Jawaban
+      optionsContainerEl.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.text;
+        btn.onclick = () => selectOption(opt.isCorrect);
+        optionsContainerEl.appendChild(btn);
+      });
+    }
+
+    // Handle Jawaban Terpilih
+    function selectOption(isCorrect) {
+      if (isCorrect) {
+        score += 20; // 20 Poin per soal
+      }
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    // Tampilkan Skor Akhir
+    function showResult() {
+      secQuiz.classList.add('hidden');
+      secResult.classList.remove('hidden');
+      
+      scoreDisplayEl.innerHTML = `${score} <span>POIN</span>`;
+      
+      const resultMessage = document.getElementById('result-message');
+      if (score === 100) {
+        resultMessage.innerText = "Luar biasa! Kamu menjawab semua dengan benar! 🎉";
+      } else if (score >= 60) {
+        resultMessage.innerText = "Bagus sekali! Tetap semangat belajar ya! 👍";
+      } else {
+        resultMessage.innerText = "Jangan berkecil hati, yuk pelajari materinya lagi! 💪";
+      }
+    }
+
+    // Ulang dari Awal
+    function restartApp() {
+      secResult.classList.add('hidden');
+      secMateri.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
